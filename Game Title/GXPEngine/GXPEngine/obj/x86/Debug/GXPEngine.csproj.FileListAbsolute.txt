@@ -5,3 +5,5 @@ C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners
 C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners\Game Title\GXPEngine\GXPEngine\obj\x86\Debug\GXPEngine.exe
 C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners\Game Title\GXPEngine\GXPEngine\obj\x86\Debug\GXPEngine.pdb
 C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners\Game Title\GXPEngine\GXPEngine\bin\Debug\GXPEngine.exe.config
+C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners\Game Title\GXPEngine\GXPEngine\bin\Debug\System.Threading.Tasks.Dataflow.dll
+C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners\Game Title\GXPEngine\GXPEngine\obj\x86\Debug\GXPEngine.csproj.CopyComplete

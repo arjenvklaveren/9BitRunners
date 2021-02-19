@@ -3,77 +3,128 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace GXPEngine
 {
-    class Level : GameObject
+    public class Level : GameObject
     {
-        int currentPlatformPosX = 500;
-        int currentPlatformPosY = 700;
+        MyGame myGame;
 
-        int platformAmount = 10;
+        public Background background;
 
-        int backgroundPosX;
+        public int currentLevel = 1;
 
-        Timing generatePlatformTimer;
+        public int maxReachedLevel = 1;
+
+        public float currentPlatformPosX = 0;
+        public float currentPlatformPosY = 700;
+
+        int platformSize = 128;
+        public float distanceBetweenPlatforms = 200;
+        public int platformSpriteOffset = 0;
+        private int platformMaxWidth = 4;
+
+        public int startPlatformAmount = 999;
+
+        public int previousPlatformAmount;
+
+        private int levelPlatformSize = 100;
+
+        public int backgroundPosX;
+
+        public float spawnPlatformSpeed = 500;
+
+        public float changeBackgroundPlatformPos = 99999999;
+
+        public int decideIfEnemyNumber1;
+        public int decideIfEnemyNumber2;
+        public int decideIfEnemyNumber3;
+
+        public bool hasBuildBeginningPlatform;
+
+        public ArrayList platforms = new ArrayList();
+        public ArrayList enemies = new ArrayList();
 
         public Level()
         {
-            generatePlatformTimer = new Timing();
+            myGame = (MyGame)game;
+            background = new Background(0, 0);
+            AddChild(background);
         }
 
         void Update()
         {
             GenerateLevel();
+            distanceBetweenPlatforms += 0.05f;
         }
 
         void GenerateLevel()
         {
-            if (generatePlatformTimer.Repeat(500, false))
+            //Made starting platform
+            if(hasBuildBeginningPlatform == false)
             {
-                generatePlatformTimer.repeated = false;
-                BuildPlatform();
+                for (int i = 0; i < startPlatformAmount; i++)
+                {
+                    Platform pfMiddle = new Platform(currentPlatformPosX, currentPlatformPosY, 1 + platformSpriteOffset);
+                    currentPlatformPosX += platformSize;
+                    platforms.Add(pfMiddle);
+                    AddChild(pfMiddle);
+                }            
+                Platform pfRight = new Platform(currentPlatformPosX, currentPlatformPosY, 2 + platformSpriteOffset);
+                currentPlatformPosX += distanceBetweenPlatforms * 2;
+                platforms.Add(pfRight);
+                AddChild(pfRight);
+
+                hasBuildBeginningPlatform = true;
             }
         }
 
-        void BuildPlatform()
+        public void BuildPlatform()
         {
-            if (platformAmount >= 5)
-            {
-                Console.WriteLine("ddd");
-                BuildBackground();
-                platformAmount = 0;
-            }
+            var random = new Random();
+
+            int decideIfEnemyOnPlatform = random.Next(0, 5);
 
             //Generate Left part of platform
-            PlatformLeft pfLeft = new PlatformLeft(currentPlatformPosX, currentPlatformPosY);
-            currentPlatformPosX += 128;
-            platformAmount++;
+            Platform pfLeft = new Platform(currentPlatformPosX, currentPlatformPosY, 0 + platformSpriteOffset);
+            currentPlatformPosX += platformSize;
+            platforms.Add(pfLeft);
             AddChild(pfLeft);
 
             //Generate middle parts of platform
-            var rand1 = new Random();
-            int platformLength = rand1.Next(0, 8);
-            
+            int platformLength = random.Next(0, platformMaxWidth);
+            int decideWhichPlatformEnemyCouldSpawn = random.Next(0, platformLength);
+         
             for(int i = 0; i < platformLength; i++)
             {
-                PlatformMiddle pfMiddle = new PlatformMiddle(currentPlatformPosX, currentPlatformPosY);
-                currentPlatformPosX += 128;
-                platformAmount++;
+                Platform pfMiddle = new Platform(currentPlatformPosX, currentPlatformPosY, 1 + platformSpriteOffset);
+                platforms.Add(pfMiddle);
                 AddChild(pfMiddle);
+
+                if (i == decideWhichPlatformEnemyCouldSpawn)
+                {
+                    if (decideIfEnemyOnPlatform == decideIfEnemyNumber1 || decideIfEnemyOnPlatform == decideIfEnemyNumber2 || decideIfEnemyOnPlatform == decideIfEnemyNumber3)
+                    {
+                        Enemy enemy = new Enemy(currentPlatformPosX, currentPlatformPosY - 110);
+                        enemies.Add(enemy);
+                        AddChild(enemy);
+                    }
+                }
+
+                currentPlatformPosX += platformSize;
             }
-            
+
             //Generate right part of platform
-            PlatformRight pfRight = new PlatformRight(currentPlatformPosX, currentPlatformPosY);
-            currentPlatformPosX += 128;
-            platformAmount++;
+            Platform pfRight = new Platform(currentPlatformPosX, currentPlatformPosY, 2 + platformSpriteOffset);
+            currentPlatformPosX += platformSize;
+            platforms.Add(pfRight);
             AddChild(pfRight);
 
             //Decrease or Increase height of platform, or not
-            var rand2 = new Random();
-            int decideIfChangeHeight = rand2.Next(0, 2);
+            int decideIfChangeHeight = random.Next(0, 2);
 
-            if(decideIfChangeHeight == 1)
+            if (decideIfChangeHeight == 1)
             {
                 if(currentPlatformPosY == 700)
                 {
@@ -85,11 +136,10 @@ namespace GXPEngine
                 }
                 else
                 {
-                    var rand3 = new Random();
-                    int decideIfChangeUpOrDown = rand3.Next(0, 2);
+                    int decideIfChangeUpOrDown = random.Next(0, 2);
                     if(decideIfChangeUpOrDown == 1)
                     {
-                        currentPlatformPosY -= 150;
+                        currentPlatformPosY -= 150;                    
                     }
                     else
                     {
@@ -97,15 +147,66 @@ namespace GXPEngine
                     }
                 }
             }
-            currentPlatformPosX += 128;
+            SetLevelStats();
+            currentPlatformPosX += distanceBetweenPlatforms;        
         }
 
-        void BuildBackground()
-        {         
-            Background backGround = new Background(backgroundPosX, 0);
-            backgroundPosX += 1900;
+        public void SetLevelStats()
+        {
+            if (platforms.Count > previousPlatformAmount + levelPlatformSize)
+            {
+                if (currentLevel < 3)
+                {
+                    changeBackgroundPlatformPos = currentPlatformPosX;
+                    currentLevel++;
+                }
+                if (currentLevel == 1)
+                {
+                    decideIfEnemyNumber1 = 4;
+                    decideIfEnemyNumber2 = 4;
+                    decideIfEnemyNumber3 = 4;
+                    platformMaxWidth = 5;
+                }
+                if (currentLevel == 2)
+                {
+                    decideIfEnemyNumber1 = 4;
+                    decideIfEnemyNumber2 = 3;
+                    decideIfEnemyNumber3 = 3;
+                    platformMaxWidth = 4;
+                }
+                if (currentLevel == 3)
+                {
+                    decideIfEnemyNumber1 = 4;
+                    decideIfEnemyNumber2 = 3;
+                    decideIfEnemyNumber3 = 2;
+                    platformMaxWidth = 3;
+                }
+                if (platformSpriteOffset < 6)
+                {
+                    platformSpriteOffset += 3;
+                }
+                previousPlatformAmount = platforms.Count;
+            }
+        }
 
-            AddChild(backGround);
+
+        //Delete everything when you die
+        public void DeletePlatforms()
+        {
+            foreach (GameObject platform in platforms)
+            {
+                platform.Destroy();
+            }
+            platforms.Clear();
+        }
+
+        public void DeleteEnemies()
+        {
+            foreach (GameObject enemy in enemies)
+            {
+                enemy.Destroy();
+            }
+            enemies.Clear();
         }
     }
 }

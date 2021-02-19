@@ -1,0 +1,5 @@
+C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners\Game Title\GXPEngine\GXPEngine\bin\Release\GXPEngine.exe.config
+C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners\Game Title\GXPEngine\GXPEngine\bin\Release\GXPEngine.exe
+C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners\Game Title\GXPEngine\GXPEngine\obj\x86\Release\GXPEngine.csprojAssemblyReference.cache
+C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners\Game Title\GXPEngine\GXPEngine\obj\x86\Release\GXPEngine.csproj.CoreCompileInputs.cache
+C:\Users\Arjen\OneDrive\School Saxion\Year 1\Term 3\Project Lift Off\9BitRunners\Game Title\GXPEngine\GXPEngine\obj\x86\Release\GXPEngine.exe

@@ -9,17 +9,21 @@ namespace GXPEngine
 {
     class Timing
     {
-        private bool delayFinished;
+        Timer delayTimer;
+        public bool delayFinished;
         private bool isDelaying;
         public bool canDelay = true;
 
+        Timer repeatTimer;
         public bool repeated;
         private bool isRepeating;
         private bool canRepeat = true;
+        int previousRepeatInterval;
 
         public Timing()
         {
-
+            delayTimer = new Timer();
+            repeatTimer = new Timer();
         }
 
         ///////////////////////////////////Delay()///////////////////////////////////////////
@@ -29,9 +33,10 @@ namespace GXPEngine
             {
                 isDelaying = true;
                 delayFinished = false;
-                Timer timer = new Timer(delayTime);
-                timer.Elapsed += OnTimedEventDelay;
-                timer.Enabled = true;
+                delayTimer.Start();
+                delayTimer.Enabled = true;
+                delayTimer.Interval = delayTime;
+                delayTimer.Elapsed += OnTimedEventDelay;
             }
             return delayFinished;
         }
@@ -53,7 +58,7 @@ namespace GXPEngine
 
         ///////////////////////////////////Repeat()///////////////////////////////////////////
         public bool Repeat(int repeatInterval, bool repeatWithDelay)
-        {
+        {           
             if (!isRepeating && canRepeat)
             {
                 if(!repeatWithDelay)
@@ -61,9 +66,14 @@ namespace GXPEngine
                     RepeatEvent();
                 }
                 isRepeating = true;
-                Timer timer = new Timer(repeatInterval);
-                timer.Elapsed += OnTimedEventRepeat;
-                timer.Enabled = true;
+                repeatTimer.Elapsed += OnTimedEventRepeat;
+                repeatTimer.Enabled = true;
+
+                if (previousRepeatInterval != repeatInterval)
+                {
+                    repeatTimer.Interval = repeatInterval;
+                    previousRepeatInterval = repeatInterval;                  
+                }
             }
             return repeated;
         }

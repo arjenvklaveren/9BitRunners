@@ -15,9 +15,10 @@ namespace GXPEngine
 		protected int _cols;
 		protected int _frames;
 		protected int _currentFrame;
+		protected bool _canLoop = true;
 
 		protected int _startFrame = 0;
-		protected byte _animationDelay = 10;
+		protected float _animationDelay = 10;
 
 		private byte _animationFrameCounter = 0;
 		
@@ -200,7 +201,7 @@ namespace GXPEngine
 		/// </summary>
 		public void NextFrame() {
 			int frame = _currentFrame + 1;
-			if (frame >= _frames + _startFrame) {
+			if (frame >= _frames + _startFrame && _canLoop) {
 				frame = _startFrame;
 			}
 			SetFrame(frame);
@@ -220,8 +221,10 @@ namespace GXPEngine
 		/// <param name="numFrames">The number of frames in the animation cycle</param>
 		/// <param name="animationDelay">The number of game frames that the same animation frame should be shown, when calling Animate()</param>
 		/// <param name="switchFrame">If true, then the currentFrame will be set in the given range, if it isn't already.</param>
-		public void SetCycle(int startFrame, int numFrames=1, byte animationDelay=255, bool switchFrame=true) {
+
+		public void SetCycle(int startFrame, int numFrames=1, float animationDelay=255, bool switchFrame=true, bool canLoop=true) {
 			_startFrame=startFrame;
+			this._canLoop = canLoop;
 			if (_startFrame<0)
 				_startFrame=0;
 			if (_startFrame>=_rows*_cols) {
